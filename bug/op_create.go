@@ -48,7 +48,9 @@ func (op *CreateOperation) Apply(snapshot *Snapshot) {
 		panic("adding a second Create operation")
 	}
 
-	snapshot.id = op.Id()
+	// the Id of the Bug/Snapshot is the Id of the first Operation: CreateOperation
+	opId := op.Id()
+	snapshot.id = opId
 
 	snapshot.addActor(op.Author_)
 	snapshot.addParticipant(op.Author_)
@@ -56,10 +58,11 @@ func (op *CreateOperation) Apply(snapshot *Snapshot) {
 	snapshot.Title = op.Title
 
 	comment := Comment{
-		id:       entity.CombineIds(snapshot.Id(), op.Id()),
-		Message:  op.Message,
-		Author:   op.Author_,
-		UnixTime: timestamp.Timestamp(op.UnixTime),
+		id:         opId,
+		combinedId: entity.CombineIds(snapshot.id, opId),
+		Message:    op.Message,
+		Author:     op.Author_,
+		UnixTime:   timestamp.Timestamp(op.UnixTime),
 	}
 
 	snapshot.Comments = []Comment{comment}

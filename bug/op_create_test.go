@@ -31,10 +31,11 @@ func TestCreate(t *testing.T) {
 	require.NoError(t, id.Validate())
 
 	comment := Comment{
-		id:       entity.CombineIds(create.Id(), create.Id()),
-		Author:   rene,
-		Message:  "message",
-		UnixTime: timestamp.Timestamp(create.UnixTime),
+		id:         id,
+		combinedId: entity.CombineIds(id, id),
+		Author:     rene,
+		Message:    "message",
+		UnixTime:   timestamp.Timestamp(create.UnixTime),
 	}
 
 	expected := Snapshot{

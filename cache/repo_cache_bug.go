@@ -293,7 +293,7 @@ func (c *RepoCache) ResolveComment(prefix string) (*BugCache, entity.CombinedId,
 			if comment.Id().HasPrefix(prefix) {
 				matchingBugIds = append(matchingBugIds, bugId)
 				matchingBug = b
-				matchingCommentId = comment.Id()
+				matchingCommentId = comment.CombinedId()
 			}
 		}
 	}

@@ -57,12 +57,14 @@ AddLoop:
 		return string(snapshot.Labels[i]) < string(snapshot.Labels[j])
 	})
 
+	id := op.Id()
 	item := &LabelChangeTimelineItem{
-		id:       entity.CombineIds(snapshot.Id(), op.Id()),
-		Author:   op.Author_,
-		UnixTime: timestamp.Timestamp(op.UnixTime),
-		Added:    op.Added,
-		Removed:  op.Removed,
+		id:         id,
+		combinedId: entity.CombineIds(snapshot.Id(), id),
+		Author:     op.Author_,
+		UnixTime:   timestamp.Timestamp(op.UnixTime),
+		Added:      op.Added,
+		Removed:    op.Removed,
 	}
 
 	snapshot.Timeline = append(snapshot.Timeline, item)
@@ -133,15 +135,20 @@ func NewLabelChangeOperation(author identity.Interface, unixTime int64, added, r
 }
 
 type LabelChangeTimelineItem struct {
-	id       entity.CombinedId
-	Author   identity.Interface
-	UnixTime timestamp.Timestamp
-	Added    []Label
-	Removed  []Label
+	id         entity.Id
+	combinedId entity.CombinedId
+	Author     identity.Interface
+	UnixTime   timestamp.Timestamp
+	Added      []Label
+	Removed    []Label
 }
 
-func (l LabelChangeTimelineItem) Id() entity.CombinedId {
+func (l LabelChangeTimelineItem) Id() entity.Id {
 	return l.id
+}
+
+func (l LabelChangeTimelineItem) CombinedId() entity.CombinedId {
+	return l.combinedId
 }
 
 // Sign post method for gqlgen

@@ -68,6 +68,20 @@ func (ci CombinedId) Validate() error {
 	return nil
 }
 
+// PrimaryPrefix is a helper to extract the primary prefix.
+// If practical, use SeparateIds instead.
+func (ci CombinedId) PrimaryPrefix() string {
+	primaryPrefix, _ := SeparateIds(string(ci))
+	return primaryPrefix
+}
+
+// SecondaryPrefix is a helper to extract the secondary prefix.
+// If practical, use SeparateIds instead.
+func (ci CombinedId) SecondaryPrefix() string {
+	_, secondaryPrefix := SeparateIds(string(ci))
+	return secondaryPrefix
+}
+
 // CombineIds compute a merged Id holding information from both the primary Id
 // and the secondary Id.
 //

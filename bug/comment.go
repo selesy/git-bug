@@ -11,12 +11,13 @@ import (
 
 // Comment represent a comment in a Bug
 type Comment struct {
-	// id should be the result of entity.CombineIds with the Bug id and the id
+	id entity.Id
+	// combinedId should be the result of entity.CombineIds with the Bug id and the id
 	// of the Operation that created the comment
-	id      entity.CombinedId
-	Author  identity.Interface
-	Message string
-	Files   []repository.Hash
+	combinedId entity.CombinedId
+	Author     identity.Interface
+	Message    string
+	Files      []repository.Hash
 
 	// Creation time of the comment.
 	// Should be used only for human display, never for ordering as we can't rely on it in a distributed system.
@@ -24,12 +25,20 @@ type Comment struct {
 }
 
 // Id return the Comment identifier
-func (c Comment) Id() entity.CombinedId {
+func (c Comment) Id() entity.Id {
 	if c.id == "" {
 		// simply panic as it would be a coding error (no id provided at construction)
 		panic("no id")
 	}
 	return c.id
+}
+
+func (c Comment) CombinedId() entity.CombinedId {
+	if c.combinedId == "" {
+		// simply panic as it would be a coding error (no id provided at construction)
+		panic("no combined id")
+	}
+	return c.combinedId
 }
 
 // FormatTimeRel format the UnixTime of the comment for human consumption

@@ -38,7 +38,7 @@ type CommentTimelineItem struct {
 
 func NewCommentTimelineItem(comment Comment) CommentTimelineItem {
 	return CommentTimelineItem{
-		id:        comment.id,
+		id:        comment.combinedId,
 		Author:    comment.Author,
 		Message:   comment.Message,
 		Files:     comment.Files,

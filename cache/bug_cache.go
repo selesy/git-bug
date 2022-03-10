@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -262,7 +263,7 @@ func (c *BugCache) EditCreateCommentRaw(author *IdentityCache, unixTime int64, b
 	return op, c.notifyUpdated()
 }
 
-func (c *BugCache) EditComment(target entity.Id, message string) (*bug.EditCommentOperation, error) {
+func (c *BugCache) EditComment(target entity.CombinedId, message string) (*bug.EditCommentOperation, error) {
 	author, err := c.repoCache.GetUserIdentity()
 	if err != nil {
 		return nil, err
@@ -271,9 +272,14 @@ func (c *BugCache) EditComment(target entity.Id, message string) (*bug.EditComme
 	return c.EditCommentRaw(author, time.Now().Unix(), target, message, nil)
 }
 
-func (c *BugCache) EditCommentRaw(author *IdentityCache, unixTime int64, target entity.Id, message string, metadata map[string]string) (*bug.EditCommentOperation, error) {
+func (c *BugCache) EditCommentRaw(author *IdentityCache, unixTime int64, target entity.CombinedId, message string, metadata map[string]string) (*bug.EditCommentOperation, error) {
 	c.mu.Lock()
-	op, err := bug.EditComment(c.bug, author.Identity, unixTime, target, message)
+	commentId, err := c.resolveComment(target)
+	if err != nil {
+		return nil, err
+	}
+
+	op, err := bug.EditComment(c.bug, author.Identity, unixTime, commentId, message)
 	if err != nil {
 		c.mu.Unlock()
 		return nil, err
@@ -334,4 +340,24 @@ func (c *BugCache) NeedCommit() bool {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	return c.bug.NeedCommit()
+}
+
+func (c *BugCache) resolveComment(combinedId entity.CombinedId) (entity.Id, error) {
+	commendPrefix := combinedId.SecondaryPrefix()
+
+	matchingIds := make([]entity.Id, 0, 5)
+
+	for _, comment := range c.Snapshot().Comments {
+		if comment.Id().HasPrefix(commendPrefix) {
+			matchingIds = append(matchingIds, comment.Id())
+		}
+	}
+
+	if len(matchingIds) > 1 {
+		return entity.UnsetId, entity.NewErrMultipleMatch("bug/comment", matchingIds)
+	} else if len(matchingIds) == 0 {
+		return entity.UnsetId, errors.New("comment doesn't exist")
+	}
+
+	return matchingIds[0], nil
 }

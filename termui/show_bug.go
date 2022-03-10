@@ -653,9 +653,9 @@ func (sb *showBug) edit(g *gocui.Gui, v *gocui.View) error {
 
 	switch op := op.(type) {
 	case *bug.AddCommentTimelineItem:
-		return editCommentWithEditor(sb.bug, op.Id(), op.Message)
+		return editCommentWithEditor(sb.bug, op.CombinedId(), op.Message)
 	case *bug.CreateTimelineItem:
-		return editCommentWithEditor(sb.bug, op.Id(), op.Message)
+		return editCommentWithEditor(sb.bug, op.CombinedId(), op.Message)
 	case *bug.LabelChangeTimelineItem:
 		return sb.editLabels(g, snap)
 	}

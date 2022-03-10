@@ -26,8 +26,9 @@ func (op *SetStatusOperation) Apply(snapshot *Snapshot) {
 	snapshot.Status = op.Status
 	snapshot.addActor(op.Author_)
 
+	id := op.Id()
 	item := &SetStatusTimelineItem{
-		id:       entity.CombineIds(snapshot.Id(), op.Id()),
+		id:       entity.CombineIds(snapshot.Id(), id),
 		Author:   op.Author_,
 		UnixTime: timestamp.Timestamp(op.UnixTime),
 		Status:   op.Status,
