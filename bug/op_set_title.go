@@ -30,11 +30,12 @@ func (op *SetTitleOperation) Apply(snapshot *Snapshot) {
 
 	id := op.Id()
 	item := &SetTitleTimelineItem{
-		id:       entity.CombineIds(snapshot.Id(), id),
-		Author:   op.Author_,
-		UnixTime: timestamp.Timestamp(op.UnixTime),
-		Title:    op.Title,
-		Was:      op.Was,
+		id:         id,
+		combinedId: entity.CombineIds(snapshot.Id(), id),
+		Author:     op.Author_,
+		UnixTime:   timestamp.Timestamp(op.UnixTime),
+		Title:      op.Title,
+		Was:        op.Was,
 	}
 
 	snapshot.Timeline = append(snapshot.Timeline, item)
@@ -101,15 +102,20 @@ func NewSetTitleOp(author identity.Interface, unixTime int64, title string, was 
 }
 
 type SetTitleTimelineItem struct {
-	id       entity.CombinedId
-	Author   identity.Interface
-	UnixTime timestamp.Timestamp
-	Title    string
-	Was      string
+	id         entity.Id
+	combinedId entity.CombinedId
+	Author     identity.Interface
+	UnixTime   timestamp.Timestamp
+	Title      string
+	Was        string
 }
 
-func (s SetTitleTimelineItem) Id() entity.CombinedId {
+func (s SetTitleTimelineItem) Id() entity.Id {
 	return s.id
+}
+
+func (s SetTitleTimelineItem) CombinedId() entity.CombinedId {
+	return s.combinedId
 }
 
 // Sign post method for gqlgen

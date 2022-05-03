@@ -34,12 +34,12 @@ func (op *EditCommentOperation) Apply(snapshot *Snapshot) {
 	// Todo: currently any message can be edited, even by a different author
 	// crypto signature are needed.
 
-	// Recreate the Comment Id to match on
-	// commentId := entity.CombineIds(snapshot.Id(), op.Target)
+	// Recreate the combined Id to match on
+	combinedId := entity.CombineIds(snapshot.Id(), op.Target)
 
 	var target TimelineItem
 	for i, item := range snapshot.Timeline {
-		if item.Id() == op.Target {
+		if item.CombinedId() == combinedId {
 			target = snapshot.Timeline[i]
 			break
 		}
@@ -52,7 +52,7 @@ func (op *EditCommentOperation) Apply(snapshot *Snapshot) {
 
 	comment := Comment{
 		id:         op.Target,
-		combinedId: entity.CombineIds(snapshot.Id(), op.Target),
+		combinedId: combinedId,
 		Message:    op.Message,
 		Files:      op.Files,
 		UnixTime:   timestamp.Timestamp(op.UnixTime),

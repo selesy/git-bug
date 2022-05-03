@@ -190,7 +190,7 @@ func (r mutationResolver) EditComment(ctx context.Context, input models.EditComm
 	op, err := b.EditCommentRaw(
 		author,
 		time.Now().Unix(),
-		entity.Id(input.Target),
+		entity.CombinedId(input.Target),
 		text.Cleanup(input.Message),
 		nil,
 	)

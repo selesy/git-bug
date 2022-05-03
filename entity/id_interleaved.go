@@ -51,7 +51,7 @@ func (ci CombinedId) MarshalGQL(w io.Writer) {
 	_, _ = w.Write([]byte(`"` + ci.String() + `"`))
 }
 
-// IsValid tell if the Id is valid
+// Validate tell if the Id is valid
 func (ci CombinedId) Validate() error {
 	// Special case to detect outdated repo
 	if len(ci) == 40 {
@@ -85,7 +85,7 @@ func (ci CombinedId) SecondaryPrefix() string {
 // CombineIds compute a merged Id holding information from both the primary Id
 // and the secondary Id.
 //
-// This allow to later find efficiently a secondary element because we can access
+// This allows to later find efficiently a secondary element because we can access
 // the primary one directly instead of searching for a primary that has a
 // secondary matching the Id.
 //

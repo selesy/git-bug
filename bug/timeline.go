@@ -10,8 +10,12 @@ import (
 )
 
 type TimelineItem interface {
-	// Id return the identifier of the item
+	// Id returns the identifier of the item within the entity
+	// Id() entity.Id
+	// TODO: try to only have this one
 	Id() entity.CombinedId
+	// CombinedId returns the global identifier of the item
+	// CombinedId() entity.CombinedId
 }
 
 // CommentHistoryStep hold one version of a message in the history
@@ -27,23 +31,25 @@ type CommentHistoryStep struct {
 // CommentTimelineItem is a TimelineItem that holds a Comment and its edition history
 type CommentTimelineItem struct {
 	// id should be the same as in Comment
-	id        entity.CombinedId
-	Author    identity.Interface
-	Message   string
-	Files     []repository.Hash
-	CreatedAt timestamp.Timestamp
-	LastEdit  timestamp.Timestamp
-	History   []CommentHistoryStep
+	id         entity.Id
+	combinedId entity.CombinedId
+	Author     identity.Interface
+	Message    string
+	Files      []repository.Hash
+	CreatedAt  timestamp.Timestamp
+	LastEdit   timestamp.Timestamp
+	History    []CommentHistoryStep
 }
 
 func NewCommentTimelineItem(comment Comment) CommentTimelineItem {
 	return CommentTimelineItem{
-		id:        comment.combinedId,
-		Author:    comment.Author,
-		Message:   comment.Message,
-		Files:     comment.Files,
-		CreatedAt: comment.UnixTime,
-		LastEdit:  comment.UnixTime,
+		id:         comment.id,
+		combinedId: comment.combinedId,
+		Author:     comment.Author,
+		Message:    comment.Message,
+		Files:      comment.Files,
+		CreatedAt:  comment.UnixTime,
+		LastEdit:   comment.UnixTime,
 		History: []CommentHistoryStep{
 			{
 				Message:  comment.Message,
@@ -53,8 +59,12 @@ func NewCommentTimelineItem(comment Comment) CommentTimelineItem {
 	}
 }
 
-func (c *CommentTimelineItem) Id() entity.CombinedId {
+func (c *CommentTimelineItem) Id() entity.Id {
 	return c.id
+}
+
+func (c *CommentTimelineItem) CombinedId() entity.CombinedId {
+	return c.combinedId
 }
 
 // Append will append a new comment in the history and update the other values

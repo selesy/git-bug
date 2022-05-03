@@ -5,6 +5,10 @@ model:
   filename: models/gen_models.go
 
 models:
+  ID:
+    model: github.com/MichaelMure/git-bug/entity.Id
+  CombinedId:
+    model: github.com/MichaelMure/git-bug/entity.CombinedId
   Repository:
     model: github.com/MichaelMure/git-bug/api/graphql/models.Repository
   RepositoryMutation:

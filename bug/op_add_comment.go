@@ -105,7 +105,7 @@ func NewAddCommentOp(author identity.Interface, unixTime int64, message string, 
 	}
 }
 
-// CreateTimelineItem replace a AddComment operation in the Timeline and hold its edition history
+// AddCommentTimelineItem replace a AddComment operation in the Timeline and hold its edition history
 type AddCommentTimelineItem struct {
 	CommentTimelineItem
 }

@@ -28,10 +28,11 @@ func (op *SetStatusOperation) Apply(snapshot *Snapshot) {
 
 	id := op.Id()
 	item := &SetStatusTimelineItem{
-		id:       entity.CombineIds(snapshot.Id(), id),
-		Author:   op.Author_,
-		UnixTime: timestamp.Timestamp(op.UnixTime),
-		Status:   op.Status,
+		id:         id,
+		combinedId: entity.CombineIds(snapshot.Id(), id),
+		Author:     op.Author_,
+		UnixTime:   timestamp.Timestamp(op.UnixTime),
+		Status:     op.Status,
 	}
 
 	snapshot.Timeline = append(snapshot.Timeline, item)
@@ -49,7 +50,7 @@ func (op *SetStatusOperation) Validate() error {
 	return nil
 }
 
-// UnmarshalJSON is a two step JSON unmarshalling
+// UnmarshalJSON is a two-step JSON unmarshalling
 // This workaround is necessary to avoid the inner OpBase.MarshalJSON
 // overriding the outer op's MarshalJSON
 func (op *SetStatusOperation) UnmarshalJSON(data []byte) error {
@@ -87,14 +88,19 @@ func NewSetStatusOp(author identity.Interface, unixTime int64, status Status) *S
 }
 
 type SetStatusTimelineItem struct {
-	id       entity.CombinedId
-	Author   identity.Interface
-	UnixTime timestamp.Timestamp
-	Status   Status
+	id         entity.Id
+	combinedId entity.CombinedId
+	Author     identity.Interface
+	UnixTime   timestamp.Timestamp
+	Status     Status
 }
 
-func (s SetStatusTimelineItem) Id() entity.CombinedId {
+func (s SetStatusTimelineItem) Id() entity.Id {
 	return s.id
+}
+
+func (s SetStatusTimelineItem) CombinedId() entity.CombinedId {
+	return s.combinedId
 }
 
 // Sign post method for gqlgen
